@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Question</title>
+    <style>
+        /* Add your styles for this page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], textarea, input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Question</h1>
+        <form action="{{ url_for('edit_question', question_id=question.id) }}" method="post">
+            <div class="form-group">
+                <label for="question_text">Question Text:</label>
+                <textarea name="question_text" id="question_text" rows="4" required>{{ question.question_text }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="marking_guide">Marking Guide:</label>
+                <textarea name="marking_guide" id="marking_guide" rows="4" required>{{ question.marking_guide }}</textarea>
+            </div>
+            <input type="submit" value="Update Question">
+        </form>
+    </div>
+</body>
+</html>

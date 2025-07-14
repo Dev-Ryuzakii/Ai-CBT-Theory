@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+    <h1>Test Question</h1>
+    <form method="POST" action="{{ url_for('test') }}">
+        <p>{{ question.question_text }}</p>
+        <textarea name="answer" required></textarea>
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        <input type="hidden" name="student_id" value="{{ student_id }}">
+        <button type="submit">Submit</button>
+    </form>
+    {% if prev_question_id %}
+    <a href="{{ url_for('test', question_id=prev_question_id, student_id=student_id) }}">Previous</a>
+    {% endif %}
+    {% if next_question_id %}
+    <a href="{{ url_for('test', question_id=next_question_id, student_id=student_id) }}">Next</a>
+    {% endif %}
+</body>
+</html>
