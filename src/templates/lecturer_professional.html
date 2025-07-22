@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-CBT Assessment Platform | Lecturer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --dark-text: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .quick-actions h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn-custom {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            color: white;
+        }
+
+        .btn-warning-custom {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-warning-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+            color: white;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .results-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .results-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-body {
+            padding: 0;
+        }
+
+        .table-custom {
+            margin: 0;
+            background: white;
+        }
+
+        .table-custom th {
+            background: var(--light-bg);
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .table-custom td {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table-custom tbody tr:hover {
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        .score-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .score-excellent {
+            background: rgba(16, 185, 129, 0.1);
+            color: #047857;
+        }
+
+        .score-good {
+            background: rgba(34, 197, 94, 0.1);
+            color: #166534;
+        }
+
+        .score-average {
+            background: rgba(245, 158, 11, 0.1);
+            color: #92400e;
+        }
+
+        .score-poor {
+            background: rgba(239, 68, 68, 0.1);
+            color: #b91c1c;
+        }
+
+        .ai-insight {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .ai-insight-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--success-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ai-insight-text {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            line-height: 1.4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .confidence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+
+        .confidence-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+        }
+
+        .btn-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1><i class="bi bi-gear-fill"></i> ICT Admin Dashboard</h1>
+                            <p>AI-powered assessment management and system administration <span class="ai-badge"><i class="bi bi-robot"></i> AI Enhanced</span></p>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-end text-white">
+                                <div class="fw-bold">ICT Administrator</div>
+                                <small style="opacity: 0.8;">ADMIN001</small>
+                            </div>
+                            <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Statistics Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: var(--primary-color);">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="stat-number" style="color: var(--primary-color);">{{ responses|length }}</div>
+                    <div class="stat-label">Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: var(--success-color);">
+                        <i class="bi bi-question-square"></i>
+                    </div>
+                    <div class="stat-number" style="color: var(--success-color);">{{ questions|length }}</div>
+                    <div class="stat-label">Active Questions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: var(--warning-color);">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <div class="stat-number" style="color: var(--warning-color);">
+                        {% if responses %}
+                            {{ "%.1f"|format(responses|map(attribute='score')|sum / responses|length) }}
+                        {% else %}
+                            0.0
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Average Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: var(--success-color);">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="stat-number" style="color: var(--success-color);">AI</div>
+                    <div class="stat-label">Scoring System</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
+                <div class="action-grid">
+                    <a href="{{ url_for('manage_questions') }}" class="btn-custom btn-primary-custom">
+                        <i class="bi bi-plus-circle btn-icon"></i>
+                        <span>Manage Questions</span>
+                    </a>
+                    <a href="{{ url_for('view_responses') }}" class="btn-custom btn-success-custom">
+                        <i class="bi bi-clipboard-check btn-icon"></i>
+                        <span>Review Responses</span>
+                    </a>
+                    <a href="{{ url_for('manage_questions') }}" class="btn-custom btn-warning-custom">
+                        <i class="bi bi-cloud-upload btn-icon"></i>
+                        <span>Upload Questions</span>
+                    </a>
+                    <a href="#" class="btn-custom btn-warning-custom" onclick="downloadResults()">
+                        <i class="bi bi-download btn-icon"></i>
+                        <span>Export Results</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Student Results -->
+            <div class="results-section">
+                <div class="results-header">
+                    <h3><i class="bi bi-clipboard-data"></i> Student Assessment Results</h3>
+                </div>
+                <div class="results-body">
+                    {% if responses %}
+                        <div class="table-responsive">
+                            <table class="table table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Question</th>
+                                        <th>Score</th>
+                                        <th>AI Confidence</th>
+                                        <th>Answer</th>
+                                        <th>AI Feedback</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for response in responses %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ response.student_name }}</strong>
+                                            </td>
+                                            <td>
+                                                <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">
+                                                    {{ response.question.question_text[:100] }}{% if response.question.question_text|length > 100 %}...{% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% set score_class = 'score-poor' %}
+                                                {% if response.score >= 4 %}
+                                                    {% set score_class = 'score-excellent' %}
+                                                {% elif response.score >= 3 %}
+                                                    {% set score_class = 'score-good' %}
+                                                {% elif response.score >= 2 %}
+                                                    {% set score_class = 'score-average' %}
+                                                {% endif %}
+                                                <span class="score-badge {{ score_class }}">
+                                                    {{ response.score }}/5
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if response.ai_confidence %}
+                                                    <div class="confidence-indicator">
+                                                        <span>{{ "%.0f"|format(response.ai_confidence * 100) }}%</span>
+                                                        <div class="confidence-bar">
+                                                            <div class="confidence-fill" style="width: {{ response.ai_confidence * 100 }}%;"></div>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-muted">N/A</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+                                                    {{ response.answer[:150] }}{% if response.answer|length > 150 %}...{% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if response.ai_feedback %}
+                                                    <div class="ai-insight">
+                                                        <div class="ai-insight-label">
+                                                            <i class="bi bi-robot"></i> AI Analysis
+                                                        </div>
+                                                        <div class="ai-insight-text">
+                                                            {{ response.ai_feedback[:200] }}{% if response.ai_feedback|length > 200 %}...{% endif %}
+                                                        </div>
+                                                        {% if response.ai_strengths %}
+                                                            <div class="ai-insight-text mt-2">
+                                                                <strong>Strengths:</strong> {{ response.ai_strengths[:100] }}{% if response.ai_strengths|length > 100 %}...{% endif %}
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if response.ai_weaknesses %}
+                                                            <div class="ai-insight-text mt-1">
+                                                                <strong>Areas for improvement:</strong> {{ response.ai_weaknesses[:100] }}{% if response.ai_weaknesses|length > 100 %}...{% endif %}
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-muted">No AI feedback available</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h4>No Student Responses Yet</h4>
+                            <p>Once students start answering questions, their results will appear here with detailed AI analysis.</p>
+                            <a href="{{ url_for('manage_questions') }}" class="btn-custom btn-primary-custom">
+                                <i class="bi bi-plus-circle"></i> Add Questions
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function downloadResults() {
+            // Create CSV content
+            let csvContent = "Student Name,Question,Score,AI Confidence,Answer,AI Feedback,Strengths,Weaknesses\n";
+            
+            {% if responses %}
+                {% for response in responses %}
+                    csvContent += "{{ response.student_name|replace(',', ';') }}," +
+                                 "{{ response.question.question_text|replace(',', ';')|replace('\n', ' ') }}," +
+                                 "{{ response.score }}," +
+                                 "{{ response.ai_confidence or 'N/A' }}," +
+                                 "{{ response.answer|replace(',', ';')|replace('\n', ' ') }}," +
+                                 "{{ response.ai_feedback|replace(',', ';')|replace('\n', ' ') if response.ai_feedback else 'N/A' }}," +
+                                 "{{ response.ai_strengths|replace(',', ';')|replace('\n', ' ') if response.ai_strengths else 'N/A' }}," +
+                                 "{{ response.ai_weaknesses|replace(',', ';')|replace('\n', ' ') if response.ai_weaknesses else 'N/A' }}\n";
+                {% endfor %}
+            {% endif %}
+
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "assessment_results_" + new Date().toISOString().split('T')[0] + ".csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Auto-refresh data every 30 seconds
+        setTimeout(function() {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

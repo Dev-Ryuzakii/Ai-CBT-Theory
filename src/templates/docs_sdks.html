@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDKs & Libraries | AI-CBT API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .back-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+        .docs-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            border: 1px solid #e2e8f0;
+        }
+        .sdk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .sdk-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 2rem;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('api_docs') }}" class="back-link">
+            <i class="fas fa-arrow-left me-2"></i>Back to Documentation
+        </a>
+        
+        <div class="docs-content">
+            <h1>SDKs & Libraries</h1>
+            <p>Official and community SDKs for the AI-CBT API.</p>
+            
+            <div class="sdk-grid">
+                <div class="sdk-card">
+                    <h5><i class="fab fa-python me-2"></i>Python SDK</h5>
+                    <p>Official Python library for AI-CBT API.</p>
+                    <div class="code-block">
+pip install ai-cbt-api
+                    </div>
+                    <div class="code-block">
+from ai_cbt_api import Client
+
+client = Client(api_key="your_key")
+result = client.score(
+    student_answer="...",
+    marking_guide="...",
+    question_text="..."
+)
+                    </div>
+                </div>
+                
+                <div class="sdk-card">
+                    <h5><i class="fab fa-js me-2"></i>JavaScript SDK</h5>
+                    <p>Official Node.js/Browser library.</p>
+                    <div class="code-block">
+npm install ai-cbt-api
+                    </div>
+                    <div class="code-block">
+const { AiCbtApi } = require('ai-cbt-api');
+
+const client = new AiCbtApi({ apiKey: 'your_key' });
+const result = await client.score({
+  studentAnswer: '...',
+  markingGuide: '...',
+  questionText: '...'
+});
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Review - Student Responses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .response-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .response-header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .response-body {
+            padding: 20px;
+        }
+        .ai-score {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .final-score {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .processing {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .admin-actions {
+            background: #f5f5f5;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('admin_page') }}">
+                <i class="bi bi-mortarboard"></i> AI-CBT Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('manage_questions') }}">Manage Questions</a>
+                <a class="nav-link active" href="{{ url_for('view_responses') }}">Review Responses</a>
+                <a class="nav-link" href="{{ url_for('admin_page') }}">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2><i class="bi bi-clipboard-check"></i> Student Response Review</h2>
+                <p class="text-muted">Review and approve AI-scored responses or override with manual scores</p>
+                
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Processing Status -->
+                {% if unprocessed_responses %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-hourglass-split"></i> 
+                    <strong>{{ unprocessed_responses|length }}</strong> responses are currently being processed by AI.
+                </div>
+                {% endif %}
+
+                <!-- Tabs for different response categories -->
+                <ul class="nav nav-tabs" id="responsesTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                            <i class="bi bi-clock"></i> Pending Review ({{ processed_responses|selectattr('admin_approved', 'equalto', false)|list|length }})
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
+                            <i class="bi bi-check-circle"></i> Approved ({{ processed_responses|selectattr('admin_approved', 'equalto', true)|list|length }})
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="processing-tab" data-bs-toggle="tab" data-bs-target="#processing" type="button" role="tab">
+                            <i class="bi bi-cpu"></i> Processing ({{ unprocessed_responses|length }})
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-4" id="responsesTabContent">
+                    <!-- Pending Review Tab -->
+                    <div class="tab-pane fade show active" id="pending" role="tabpanel">
+                        {% set pending_responses = processed_responses|selectattr('admin_approved', 'equalto', false)|list %}
+                        {% if pending_responses %}
+                            {% for response in pending_responses %}
+                                <div class="response-card">
+                                    <div class="response-header">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-1">{{ response.student.name }}</h5>
+                                                <small class="text-muted">Matric: {{ response.student.matric_number }}</small>
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <span class="badge bg-warning">Pending Review</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="response-body">
+                                        <h6><i class="bi bi-question-circle"></i> Question:</h6>
+                                        <p class="border-start border-primary ps-3">{{ response.question.question_text }}</p>
+                                        
+                                        <h6><i class="bi bi-book"></i> Marking Guide:</h6>
+                                        <p class="border-start border-success ps-3 small">{{ response.question.marking_guide }}</p>
+                                        
+                                        <h6><i class="bi bi-pencil"></i> Student Answer:</h6>
+                                        <p class="border-start border-secondary ps-3">{{ response.answer }}</p>
+                                        
+                                        <div class="ai-score">
+                                            <h6><i class="bi bi-robot"></i> AI Assessment:</h6>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <strong>Score: {{ "%.1f"|format(response.ai_score or 0) }}/10</strong>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <strong>Confidence: {{ "%.1f"|format(response.ai_confidence or 0) }}%</strong>
+                                                </div>
+                                            </div>
+                                            {% if response.ai_feedback %}
+                                            <p class="mt-2 mb-0"><strong>AI Feedback:</strong> {{ response.ai_feedback }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-actions">
+                                        <h6><i class="bi bi-gear"></i> Admin Actions:</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <!-- Approve AI Score -->
+                                                <form method="POST" action="{{ url_for('admin_approve_response') }}" class="d-inline">
+                                                    <input type="hidden" name="response_id" value="{{ response.id }}">
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Admin Comments (Optional):</label>
+                                                        <textarea name="admin_comments" class="form-control" rows="2" placeholder="Add any comments..."></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        <i class="bi bi-check"></i> Approve AI Score ({{ "%.1f"|format(response.ai_score or 0) }}/10)
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <!-- Override with Manual Score -->
+                                                <form method="POST" action="{{ url_for('admin_approve_response') }}" class="d-inline">
+                                                    <input type="hidden" name="response_id" value="{{ response.id }}">
+                                                    <input type="hidden" name="action" value="override">
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Manual Score (0-10):</label>
+                                                        <input type="number" name="manual_score" class="form-control" min="0" max="10" step="0.1" placeholder="0.0" required>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Admin Comments:</label>
+                                                        <textarea name="admin_comments" class="form-control" rows="2" placeholder="Reason for override..."></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-warning btn-sm">
+                                                        <i class="bi bi-pencil"></i> Override with Manual Score
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> No responses pending review.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Approved Tab -->
+                    <div class="tab-pane fade" id="approved" role="tabpanel">
+                        {% set approved_responses = processed_responses|selectattr('admin_approved', 'equalto', true)|list %}
+                        {% if approved_responses %}
+                            {% for response in approved_responses %}
+                                <div class="response-card">
+                                    <div class="response-header">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-1">{{ response.student.name }}</h5>
+                                                <small class="text-muted">Matric: {{ response.student.matric_number }}</small>
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <span class="badge bg-success">Approved</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="response-body">
+                                        <h6><i class="bi bi-question-circle"></i> Question:</h6>
+                                        <p class="border-start border-primary ps-3">{{ response.question.question_text }}</p>
+                                        
+                                        <h6><i class="bi bi-pencil"></i> Student Answer:</h6>
+                                        <p class="border-start border-secondary ps-3">{{ response.answer }}</p>
+                                        
+                                        <div class="final-score">
+                                            <h6><i class="bi bi-award"></i> Final Score: {{ "%.1f"|format(response.final_score or 0) }}/10</h6>
+                                            {% if response.final_score != response.ai_score %}
+                                                <small class="text-muted">Original AI Score: {{ "%.1f"|format(response.ai_score or 0) }}/10 (Overridden)</small>
+                                            {% else %}
+                                                <small class="text-muted">AI Score Approved</small>
+                                            {% endif %}
+                                            {% if response.admin_comments %}
+                                                <p class="mt-2 mb-0"><strong>Admin Comments:</strong> {{ response.admin_comments }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> No approved responses yet.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Processing Tab -->
+                    <div class="tab-pane fade" id="processing" role="tabpanel">
+                        {% if unprocessed_responses %}
+                            {% for response in unprocessed_responses %}
+                                <div class="response-card">
+                                    <div class="response-header">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-1">{{ response.student.name }}</h5>
+                                                <small class="text-muted">Matric: {{ response.student.matric_number }}</small>
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <span class="badge bg-warning">
+                                                    <i class="bi bi-hourglass-split"></i> Processing...
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="response-body">
+                                        <h6><i class="bi bi-question-circle"></i> Question:</h6>
+                                        <p class="border-start border-primary ps-3">{{ response.question.question_text }}</p>
+                                        
+                                        <h6><i class="bi bi-pencil"></i> Student Answer:</h6>
+                                        <p class="border-start border-secondary ps-3">{{ response.answer }}</p>
+                                        
+                                        <div class="processing">
+                                            <i class="bi bi-cpu"></i> AI is currently processing this response...
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> No responses currently being processed.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-refresh every 30 seconds for processing updates
+        setInterval(function() {
+            if (document.getElementById('processing-tab').classList.contains('active')) {
+                location.reload();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

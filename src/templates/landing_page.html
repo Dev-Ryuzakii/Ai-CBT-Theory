@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-CBT Assessment API | Intelligent Assessment Solutions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --dark-color: #2d3748;
+            --light-color: #f7fafc;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(45deg, var(--accent-color), #4facfe);
+            border: none;
+            padding: 15px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(79, 172, 254, 0.4);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: none;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .stats-section {
+            background: var(--light-color);
+            padding: 5rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--dark-color);
+            opacity: 0.7;
+        }
+
+        .code-example {
+            background: #1a202c;
+            border-radius: 15px;
+            padding: 2rem;
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            overflow-x: auto;
+        }
+
+        .api-endpoint {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            border: 3px solid var(--primary-color);
+        }
+
+        .pricing-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px);
+            background: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-primary" href="#home">
+                <i class="fas fa-brain me-2"></i>AI-CBT API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api-docs">API Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#getting-started">Get Started</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-4 rounded-pill ms-2" href="/api-dashboard">Live Demo</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Intelligent Assessment<br>API Platform</h1>
+                        <p class="hero-subtitle">
+                            Transform education with AI-powered assessment. Our advanced API provides automated scoring, 
+                            instant feedback, and seamless integration for modern learning platforms.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#getting-started" class="btn btn-gradient btn-lg">
+                                <i class="fas fa-rocket me-2"></i>Get Started Free
+                            </a>
+                            <a href="/api-dashboard" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-play me-2"></i>Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="code-example">
+                        <div class="mb-3">
+                            <span style="color: #68d391;"># Quick Start Example</span>
+                        </div>
+                        <div style="color: #fbb6ce;">curl -X POST \</div>
+                        <div style="margin-left: 20px; color: #81e6d9;">"https://api.ai-cbt.com/v1/score" \</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">-H "X-API-Key: your_key" \</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">-H "Content-Type: application/json" \</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">-d '{</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">"student_answer": "Photosynthesis...",</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">"marking_guide": "Process where...",</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">"question_text": "Explain photosynthesis"</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">}'</div>
+                        <br>
+                        <div style="color: #68d391;"># Response</div>
+                        <div style="color: #f6ad55;">{</div>
+                        <div style="margin-left: 20px; color: #90cdf4;">"score": 4.5,</div>
+                        <div style="margin-left: 20px; color: #90cdf4;">"feedback": "Excellent explanation...",</div>
+                        <div style="margin-left: 20px; color: #90cdf4;">"confidence": 0.92</div>
+                        <div style="color: #f6ad55;">}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-item">
+                        <span class="stat-number">99.9%</span>
+                        <div class="stat-label">Uptime Guarantee</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-item">
+                        <span class="stat-number">&lt;2s</span>
+                        <div class="stat-label">Response Time</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-item">
+                        <span class="stat-number">85%+</span>
+                        <div class="stat-label">Accuracy Rate</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-item">
+                        <span class="stat-number">1M+</span>
+                        <div class="stat-label">Assessments Processed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                    <h2 class="display-4 fw-bold mb-4">Powerful Features</h2>
+                    <p class="lead text-muted">Everything you need to build intelligent assessment systems</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="mb-3">AI-Powered Scoring</h4>
+                        <p class="text-muted">Advanced semantic understanding using state-of-the-art language models for accurate assessment and detailed feedback.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h4 class="mb-3">RESTful API</h4>
+                        <p class="text-muted">Clean, well-documented REST API with JSON responses, making integration with any platform simple and straightforward.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="mb-3">Real-time Processing</h4>
+                        <p class="text-muted">Lightning-fast response times with real-time scoring and instant feedback generation for seamless user experiences.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="mb-3">Enterprise Security</h4>
+                        <p class="text-muted">API key authentication, rate limiting, and enterprise-grade security features to protect your data and users.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="mb-3">Analytics & Insights</h4>
+                        <p class="text-muted">Comprehensive analytics dashboard with detailed insights into assessment patterns and learning outcomes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h4 class="mb-3">Developer Friendly</h4>
+                        <p class="text-muted">Extensive documentation, code examples, and SDKs in multiple programming languages for rapid development.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation Section -->
+    <section id="api-docs" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                    <h2 class="display-4 fw-bold mb-4">API Documentation</h2>
+                    <p class="lead text-muted">Comprehensive documentation and examples to get you started quickly</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h3 class="mb-4">Core Endpoints</h3>
+                    <div class="api-endpoint">
+                        <strong>POST</strong> /api/v1/score <span class="float-end">Score individual answers</span>
+                    </div>
+                    <div class="api-endpoint">
+                        <strong>GET</strong> /api/v1/questions <span class="float-end">List all questions</span>
+                    </div>
+                    <div class="api-endpoint">
+                        <strong>POST</strong> /api/v1/questions <span class="float-end">Create new questions</span>
+                    </div>
+                    <div class="api-endpoint">
+                        <strong>POST</strong> /api/v1/students <span class="float-end">Manage students</span>
+                    </div>
+                    <div class="api-endpoint">
+                        <strong>POST</strong> /api/v1/submit-response <span class="float-end">Submit responses</span>
+                    </div>
+                    <div class="api-endpoint">
+                        <strong>GET</strong> /api/v1/student/{id}/responses <span class="float-end">Get progress</span>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="/api/v1/docs" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-book me-2"></i>Full Documentation
+                        </a>
+                        <a href="/api-dashboard" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-play me-2"></i>Interactive Demo
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <h3 class="mb-4">Quick Integration</h3>
+                    <div class="code-example">
+                        <div class="mb-3" style="color: #68d391;"># Python Example</div>
+                        <div style="color: #fbb6ce;">import requests</div>
+                        <br>
+                        <div style="color: #fbb6ce;">response = requests.post(</div>
+                        <div style="margin-left: 20px; color: #81e6d9;">'http://localhost:5001/api/v1/score',</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">headers={</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">'X-API-Key': 'your_api_key',</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">'Content-Type': 'application/json'</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">},</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">json={</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">'student_answer': 'Your answer here',</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">'marking_guide': 'Marking criteria',</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">'question_text': 'Question text'</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">}</div>
+                        <div style="color: #fbb6ce;">)</div>
+                        <br>
+                        <div style="color: #fbb6ce;">result = response.json()</div>
+                        <div style="color: #f6ad55;">print(f"Score: {result['data']['score']}/5")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                    <h2 class="display-4 fw-bold mb-4">Simple Pricing</h2>
+                    <p class="lead text-muted">Choose the perfect plan for your needs. Scale as you grow.</p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-card text-center">
+                        <h4 class="mb-3">Developer</h4>
+                        <div class="display-4 fw-bold text-primary mb-3">Free</div>
+                        <p class="text-muted mb-4">Perfect for testing and development</p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>1,000 API calls/month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic documentation</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Community support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Standard models</li>
+                        </ul>
+                        <button class="btn btn-outline-primary btn-lg w-100">Get Started</button>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card text-center featured">
+                        <h4 class="mb-3">Professional</h4>
+                        <div class="display-4 fw-bold text-primary mb-3">$99<small class="fs-6 text-muted">/mo</small></div>
+                        <p class="text-muted mb-4">For growing businesses and platforms</p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>50,000 API calls/month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced analytics</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom models</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>SLA guarantee</li>
+                        </ul>
+                        <button class="btn btn-primary btn-lg w-100">Start Free Trial</button>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-card text-center">
+                        <h4 class="mb-3">Enterprise</h4>
+                        <div class="display-4 fw-bold text-primary mb-3">Custom</div>
+                        <p class="text-muted mb-4">For large-scale implementations</p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Unlimited API calls</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dedicated support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom deployment</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>White-label solution</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom integrations</li>
+                        </ul>
+                        <button class="btn btn-outline-primary btn-lg w-100">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section id="getting-started" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                    <h2 class="display-4 fw-bold mb-4">Get Started in Minutes</h2>
+                    <p class="lead text-muted">Follow these simple steps to integrate AI-powered assessment into your application</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto mb-3">
+                            <span class="fw-bold fs-3">1</span>
+                        </div>
+                        <h4 class="mb-3">Get Your API Key</h4>
+                        <p class="text-muted">Sign up for a free account and get your API key instantly. No credit card required for the developer plan.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto mb-3">
+                            <span class="fw-bold fs-3">2</span>
+                        </div>
+                        <h4 class="mb-3">Make Your First Call</h4>
+                        <p class="text-muted">Use our interactive documentation or code examples to make your first API call and see the results immediately.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto mb-3">
+                            <span class="fw-bold fs-3">3</span>
+                        </div>
+                        <h4 class="mb-3">Integrate & Scale</h4>
+                        <p class="text-muted">Integrate our API into your application and scale as needed. Our platform grows with your requirements.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-lg-8 mx-auto">
+                    <div class="code-example">
+                        <div class="mb-3" style="color: #68d391;"># Start with a simple curl command</div>
+                        <div style="color: #fbb6ce;">curl -X POST http://localhost:5001/api/v1/score \</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">-H "X-API-Key: dev_key_123" \</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">-H "Content-Type: application/json" \</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">-d '{</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">"student_answer": "Photosynthesis is the process by which plants convert light energy into chemical energy",</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">"marking_guide": "Should mention light energy conversion, chlorophyll, and glucose production",</div>
+                        <div style="margin-left: 40px; color: #90cdf4;">"question_text": "Explain the process of photosynthesis"</div>
+                        <div style="margin-left: 20px; color: #fbb6ce;">}'</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-brain me-2"></i>AI-CBT API
+                    </h5>
+                    <p class="text-light opacity-75">
+                        Revolutionizing education with intelligent assessment solutions. 
+                        Build smarter learning platforms with our AI-powered API.
+                    </p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="mb-3">Product</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#features" class="text-light opacity-75 text-decoration-none">Features</a></li>
+                        <li class="mb-2"><a href="#pricing" class="text-light opacity-75 text-decoration-none">Pricing</a></li>
+                        <li class="mb-2"><a href="/api-dashboard" class="text-light opacity-75 text-decoration-none">Demo</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="mb-3">Developers</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/api/v1/docs" class="text-light opacity-75 text-decoration-none">API Docs</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">SDKs</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Examples</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Status</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">About</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Blog</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Help Center</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Community</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Contact Support</a></li>
+                        <li class="mb-2"><a href="#" class="text-light opacity-75 text-decoration-none">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light opacity-75">
+                        © 2025 AI-CBT API Platform. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-light opacity-75">
+                        Built with ❤️ for the future of education
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white', 'shadow');
+            } else {
+                navbar.classList.remove('shadow');
+            }
+        });
+
+        // Copy code example functionality
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Show success feedback
+                console.log('Code copied to clipboard');
+            });
+        }
+    </script>
+</body>
+</html>

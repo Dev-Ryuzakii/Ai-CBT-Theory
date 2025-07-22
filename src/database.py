@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, ForeignKey, Float
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy.exc import IntegrityError
 
@@ -28,11 +28,19 @@ class Response(Base):
     student_id = Column(Integer, ForeignKey('students.id'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     answer = Column(Text, nullable=False)
-    score = Column(Integer, default=0)
+    score = Column(Float, default=0)  # Changed to Float for decimal scores
     corrected_answer = Column(Text, nullable=True)
     is_correct = Column(Boolean, default=False)
-    ai_score = Column(Integer, default=0)  # Add this line
-    lecturer_score = Column(Integer, default=0)  # Added column
+    ai_score = Column(Float, default=0)  # Changed to Float for decimal scores
+    lecturer_score = Column(Float, default=0)  # Changed to Float for decimal scores
+    ai_feedback = Column(Text, nullable=True)  # Ollama feedback
+    ai_confidence = Column(Float, nullable=True)  # Ollama confidence score
+    ai_strengths = Column(Text, nullable=True)  # JSON string of strengths
+    ai_weaknesses = Column(Text, nullable=True)  # JSON string of weaknesses
+    admin_approved = Column(Boolean, default=False)  # Whether admin has approved/reviewed
+    final_score = Column(Float, nullable=True)  # Final score after admin review
+    admin_comments = Column(Text, nullable=True)  # Admin comments on the response
+    is_processed = Column(Boolean, default=False)  # Whether AI processing is complete
     
     student = relationship("Student", back_populates="responses")
     question = relationship("Question")

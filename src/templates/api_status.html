@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Status | AI-CBT Assessment API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--light-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: var(--dark-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .overall-status {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .status-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-operational {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-degraded {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 1rem;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+
+        .service-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .status-badge-operational {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-badge-degraded {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-badge-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+        }
+
+        .incidents-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .incident {
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(245, 158, 11, 0.05);
+            border-radius: 0.5rem;
+        }
+
+        .incident-resolved {
+            border-left-color: var(--success-color);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .incident-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .incident-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+
+        .incident-time {
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+        }
+
+        .history-section {
+            margin-top: 3rem;
+        }
+
+        .uptime-bar {
+            height: 40px;
+            background: var(--border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: flex;
+        }
+
+        .uptime-segment {
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .uptime-operational {
+            background: var(--success-color);
+        }
+
+        .uptime-degraded {
+            background: var(--warning-color);
+        }
+
+        .uptime-down {
+            background: var(--danger-color);
+        }
+
+        .nav-bar {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .refresh-info {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="{{ url_for('api_landing') }}" class="logo">
+                <i class="fas fa-robot me-2"></i>AI-CBT API
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('api_landing') }}">Home</a>
+                <a href="{{ url_for('api_docs') }}">Documentation</a>
+                <a href="{{ url_for('register') }}">Get API Key</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>System Status</h1>
+            <p class="text-muted">Real-time status of AI-CBT Assessment API services</p>
+        </div>
+
+        <!-- Overall Status -->
+        <div class="overall-status">
+            <div class="status-indicator status-operational">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>All Systems Operational</h2>
+            <p class="text-muted">All API services are running normally with 99.9% uptime</p>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-header">
+                    <h5 class="service-name">Assessment API</h5>
+                    <span class="service-status status-badge-operational">Operational</span>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric">
+                        <div class="metric-value">156ms</div>
+                        <div class="metric-label">Avg Response</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">99.99%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2.4k</div>
+                        <div class="metric-label">Req/min</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h5 class="service-name">AI Scoring Engine</h5>
+                    <span class="service-status status-badge-operational">Operational</span>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric">
+                        <div class="metric-value">1.2s</div>
+                        <div class="metric-label">Avg Response</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">99.95%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">847</div>
+                        <div class="metric-label">Assessments/min</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h5 class="service-name">Authentication</h5>
+                    <span class="service-status status-badge-operational">Operational</span>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric">
+                        <div class="metric-value">89ms</div>
+                        <div class="metric-label">Avg Response</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">1.1k</div>
+                        <div class="metric-label">Auth/min</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h5 class="service-name">Database</h5>
+                    <span class="service-status status-badge-operational">Operational</span>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric">
+                        <div class="metric-value">45ms</div>
+                        <div class="metric-label">Avg Query</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">99.98%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">3.2k</div>
+                        <div class="metric-label">Queries/min</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h5 class="service-name">Rate Limiting</h5>
+                    <span class="service-status status-badge-operational">Operational</span>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric">
+                        <div class="metric-value">12ms</div>
+                        <div class="metric-label">Avg Check</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">156</div>
+                        <div class="metric-label">Blocked/hour</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <h5 class="service-name">CDN & Edge</h5>
+                    <span class="service-status status-badge-operational">Operational</span>
+                </div>
+                <div class="metrics-row">
+                    <div class="metric">
+                        <div class="metric-value">23ms</div>
+                        <div class="metric-label">Avg Latency</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">99.99%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">98.7%</div>
+                        <div class="metric-label">Cache Hit</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Incidents -->
+        <div class="incidents-section">
+            <h3>Recent Incidents</h3>
+            <p class="text-muted mb-4">Past incidents and maintenance windows</p>
+            
+            <div class="incident incident-resolved">
+                <div class="incident-header">
+                    <h6 class="incident-title">Scheduled Maintenance Complete</h6>
+                    <span class="incident-time">2 hours ago</span>
+                </div>
+                <p class="text-muted mb-0">Database optimization and security updates completed successfully. All services restored to normal operation.</p>
+            </div>
+
+            <div class="incident incident-resolved">
+                <div class="incident-header">
+                    <h6 class="incident-title">Increased Response Times - Resolved</h6>
+                    <span class="incident-time">3 days ago</span>
+                </div>
+                <p class="text-muted mb-0">Temporary increase in API response times due to high traffic. Additional servers deployed and performance restored.</p>
+            </div>
+
+            <div class="incident incident-resolved">
+                <div class="incident-header">
+                    <h6 class="incident-title">Rate Limiting Update</h6>
+                    <span class="incident-time">1 week ago</span>
+                </div>
+                <p class="text-muted mb-0">Updated rate limiting algorithms to improve fair usage and prevent abuse. No service interruption.</p>
+            </div>
+        </div>
+
+        <!-- Uptime History -->
+        <div class="history-section">
+            <h3>30-Day Uptime History</h3>
+            <p class="text-muted">Overall system availability over the past 30 days</p>
+            
+            <div class="uptime-bar">
+                <div class="uptime-segment uptime-operational" style="width: 96%"></div>
+                <div class="uptime-segment uptime-degraded" style="width: 3%"></div>
+                <div class="uptime-segment uptime-down" style="width: 1%"></div>
+            </div>
+            
+            <div class="d-flex justify-content-between text-sm text-muted">
+                <span>30 days ago</span>
+                <span><strong>99.85% uptime</strong></span>
+                <span>Today</span>
+            </div>
+        </div>
+
+        <!-- Auto-refresh info -->
+        <div class="refresh-info">
+            <i class="fas fa-sync-alt me-2"></i>
+            Page automatically refreshes every 30 seconds | Last updated: <span id="lastUpdated"></span>
+        </div>
+    </div>
+
+    <script>
+        // Update timestamp
+        function updateTimestamp() {
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            updateTimestamp();
+            // In production, you would fetch real-time data here
+        }, 30000);
+
+        // Initial timestamp
+        updateTimestamp();
+
+        // Simulate real-time updates (for demo purposes)
+        function simulateStatusUpdates() {
+            const responseTimeElements = document.querySelectorAll('.metric-value');
+            responseTimeElements.forEach(element => {
+                if (element.textContent.includes('ms')) {
+                    const currentValue = parseInt(element.textContent);
+                    const variation = Math.random() * 20 - 10; // ±10ms variation
+                    const newValue = Math.max(1, Math.round(currentValue + variation));
+                    element.textContent = newValue + 'ms';
+                }
+            });
+        }
+
+        // Update metrics every 5 seconds for demo
+        setInterval(simulateStatusUpdates, 5000);
+    </script>
+</body>
+</html>

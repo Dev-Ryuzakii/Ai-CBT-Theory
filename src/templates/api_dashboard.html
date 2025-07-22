@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-CBT API Service Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin: 2rem auto;
+            max-width: 1200px;
+            padding: 2rem;
+        }
+        .api-endpoint {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            padding: 1rem;
+        }
+        .method-badge {
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+        .method-get { background: #28a745; color: white; }
+        .method-post { background: #007bff; color: white; }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .status-online { background: #28a745; }
+        .status-offline { background: #dc3545; }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h1 class="display-4"><i class="bi bi-robot"></i> AI-CBT API Service</h1>
+                    <p class="lead">Intelligent Assessment API for Educational Applications</p>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <span class="status-indicator" id="apiStatus"></span>
+                        <span id="statusText">Checking API status...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Overview -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-cpu display-4 text-primary"></i>
+                            <h5 class="card-title">AI-Powered Scoring</h5>
+                            <p class="card-text">Advanced AI models provide intelligent assessment and detailed feedback.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-shield-check display-4 text-success"></i>
+                            <h5 class="card-title">Secure API Access</h5>
+                            <p class="card-text">API key authentication ensures secure access to assessment services.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-graph-up display-4 text-info"></i>
+                            <h5 class="card-title">Scalable Integration</h5>
+                            <p class="card-text">RESTful API design allows easy integration into any platform.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Endpoints -->
+            <div class="row">
+                <div class="col-12">
+                    <h3><i class="bi bi-code-slash"></i> Available API Endpoints</h3>
+                    
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="method-badge method-get">GET</span>
+                                <strong>/api/v1/health</strong>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testEndpoint('health')">Test</button>
+                        </div>
+                        <p class="mb-0 mt-2 text-muted">Check API service health and availability</p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="method-badge method-post">POST</span>
+                                <strong>/api/v1/score</strong>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testScoring()">Test Scoring</button>
+                        </div>
+                        <p class="mb-0 mt-2 text-muted">Score student answers using AI analysis</p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="method-badge method-get">GET</span>
+                                <strong>/api/v1/questions</strong>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testEndpoint('questions')">Test</button>
+                        </div>
+                        <p class="mb-0 mt-2 text-muted">Retrieve all available assessment questions</p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="method-badge method-post">POST</span>
+                                <strong>/api/v1/students</strong>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testCreateStudent()">Test</button>
+                        </div>
+                        <p class="mb-0 mt-2 text-muted">Create or retrieve student information</p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="method-badge method-post">POST</span>
+                                <strong>/api/v1/submit-response</strong>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testSubmitResponse()">Test</button>
+                        </div>
+                        <p class="mb-0 mt-2 text-muted">Submit and automatically score student responses</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Testing Area -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3><i class="bi bi-play-circle"></i> Live API Testing</h3>
+                    <div id="testResults" class="code-block" style="display: none;">
+                        <pre id="resultContent"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integration Examples -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3><i class="bi bi-code"></i> Integration Examples</h3>
+                    
+                    <ul class="nav nav-tabs" id="exampleTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="python-tab" data-bs-toggle="tab" data-bs-target="#python" type="button">Python</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="javascript-tab" data-bs-toggle="tab" data-bs-target="#javascript" type="button">JavaScript</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="curl-tab" data-bs-toggle="tab" data-bs-target="#curl" type="button">cURL</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="exampleTabContent">
+                        <div class="tab-pane fade show active" id="python" role="tabpanel">
+                            <div class="code-block mt-3">
+<pre>import requests
+
+# Score an answer
+response = requests.post('http://localhost:5001/api/v1/score', 
+    headers={'X-API-Key': 'dev_key_123', 'Content-Type': 'application/json'},
+    json={
+        'student_answer': 'Photosynthesis is how plants make food from sunlight.',
+        'marking_guide': 'Photosynthesis converts light energy to chemical energy...',
+        'question_text': 'Explain photosynthesis.'
+    })
+
+result = response.json()
+print(f"Score: {result['data']['score']}/5")
+print(f"Feedback: {result['data']['feedback']}")</pre>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="javascript" role="tabpanel">
+                            <div class="code-block mt-3">
+<pre>// Score an answer using fetch
+const response = await fetch('http://localhost:5001/api/v1/score', {
+    method: 'POST',
+    headers: {
+        'X-API-Key': 'dev_key_123',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        student_answer: 'Photosynthesis is how plants make food from sunlight.',
+        marking_guide: 'Photosynthesis converts light energy to chemical energy...',
+        question_text: 'Explain photosynthesis.'
+    })
+});
+
+const result = await response.json();
+console.log(`Score: ${result.data.score}/5`);
+console.log(`Feedback: ${result.data.feedback}`);</pre>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="curl" role="tabpanel">
+                            <div class="code-block mt-3">
+<pre>curl -X POST "http://localhost:5001/api/v1/score" \
+  -H "X-API-Key: dev_key_123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "student_answer": "Photosynthesis is how plants make food from sunlight.",
+    "marking_guide": "Photosynthesis converts light energy to chemical energy...",
+    "question_text": "Explain photosynthesis."
+  }'</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Links -->
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <h4>📚 Documentation & Resources</h4>
+                    <div class="btn-group" role="group">
+                        <a href="/api/v1/docs" class="btn btn-primary" target="_blank">
+                            <i class="bi bi-book"></i> Full API Documentation
+                        </a>
+                        <a href="/admin" class="btn btn-secondary">
+                            <i class="bi bi-gear"></i> Admin Dashboard
+                        </a>
+                        <a href="/" class="btn btn-info">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '/api/v1';
+        const API_KEY = 'dev_key_123';
+
+        // Check API health on page load
+        window.addEventListener('load', checkAPIHealth);
+
+        async function checkAPIHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('apiStatus');
+                const statusTextEl = document.getElementById('statusText');
+                
+                if (data.status === 'healthy') {
+                    statusEl.className = 'status-indicator status-online';
+                    statusTextEl.textContent = 'API Online - All services operational';
+                } else {
+                    statusEl.className = 'status-indicator status-offline';
+                    statusTextEl.textContent = 'API Issues detected';
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('apiStatus');
+                const statusTextEl = document.getElementById('statusText');
+                statusEl.className = 'status-indicator status-offline';
+                statusTextEl.textContent = 'API Offline';
+            }
+        }
+
+        function showResult(data) {
+            const resultsDiv = document.getElementById('testResults');
+            const contentDiv = document.getElementById('resultContent');
+            contentDiv.textContent = JSON.stringify(data, null, 2);
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function testEndpoint(endpoint) {
+            try {
+                const headers = endpoint !== 'health' ? {'X-API-Key': API_KEY} : {};
+                const response = await fetch(`${API_BASE}/${endpoint}`, { headers });
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message });
+            }
+        }
+
+        async function testScoring() {
+            try {
+                const response = await fetch(`${API_BASE}/score`, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        student_answer: 'Gravity is a force that pulls objects toward Earth.',
+                        marking_guide: 'Gravity is the force of attraction between masses, particularly noticeable as objects being pulled toward Earth due to its large mass.',
+                        question_text: 'What is gravity?'
+                    })
+                });
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message });
+            }
+        }
+
+        async function testCreateStudent() {
+            try {
+                const response = await fetch(`${API_BASE}/students`, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: 'Test Student',
+                        matric_number: 'TEST123'
+                    })
+                });
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message });
+            }
+        }
+
+        async function testSubmitResponse() {
+            try {
+                // First create a student and question if needed
+                const response = await fetch(`${API_BASE}/submit-response`, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        student_id: 1,
+                        question_id: 1,
+                        answer: 'This is a test answer demonstrating the API functionality.'
+                    })
+                });
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message });
+            }
+        }
+    </script>
+</body>
+</html>

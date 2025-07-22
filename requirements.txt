@@ -5,3 +5,5 @@ gensim
 numpy
 pandas
 joblib
+requests
+python-docx
