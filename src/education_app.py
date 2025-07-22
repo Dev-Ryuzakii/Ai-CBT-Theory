@@ -413,7 +413,7 @@ def process_answer_in_background(student_id, question_id, student_answer, markin
             score, confidence, feedback = ollama_service.score_answer(
                 student_answer=student_answer,
                 marking_guide=marking_guide,
-                question_text=question_text
+                question=question_text
             )
             
             # Update response with AI results
